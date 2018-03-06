@@ -23,43 +23,43 @@ int draw_mode = GL_LINE;
 
 // Prints our Engine's Guide to Success!
 void printHelp(){
-    cout << "#_______________________ENGINE [GUIDE]_________________________#" << endl;
-    cout << "|                                                                                                                             |" << endl;
-    cout << "| Usage: ./engine {XML FILE}                                                                             |" << endl;
-    cout << "|                 [-h]                                                                                                      |" << endl;
-    cout << "|                                                                                                                             |" << endl;
-    cout << "|   FILE:                                                                                                                  |" << endl;
-    cout << "|   Specify a path to an XML file in which the information about                 |" << endl;
-    cout << "|   the models you wish to create are specified                                              |" << endl;
-    cout << "|                                                                                                                              |" << endl;
-    cout << "|   MOVE:                                                                                                               |" << endl;
-    cout << "|   w: Move UP (Translates upward, through the Y axis                                 |" << endl;
-    cout << "|                                                                                                                              |" << endl;
-    cout << "|   s: Move DOWN (Translates downward, through the Y axis                      |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   a: Move LEFT (Translates leftward, through the X axis (negative)           |" << endl;
-    cout << "|       and through the Z axis (positive)                                                              |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   d: Move RIGHT (Translates rightward through the X axis (positive)        |" << endl;
-    cout << "|   and through the Z axis (negative)                                                                  |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   1 : Increase X axis length                                                                                |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   2 : Increase Y axis length                                                                                |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   3 : Increase Z axis length                                                                                |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   + : Zoom In                                                                                                       |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   - : Zoom Out                                                                                                     |" << endl;
-    cout << "|                                                                                                                               |" << endl;
-    cout << "|   FORMAT:                                                                                                            |" << endl;
-    cout << "|   p: Change the figure format into points                                                       |" << endl;
-    cout << "|                                                                                                                                |" << endl;
-    cout << "|   l: Change the figure format into lines                                                            |" << endl;
-    cout << "|                                                                                                                                |" << endl;
-    cout << "|   o: Fill up the figure                                                                                            |" << endl;
-    cout << "#________________________________________________________________#" << endl;
+    cout << "#___________________________ENGINE [GUIDE]___________________________#" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "| Usage: ./engine {XML FILE}                                         |" << endl;
+    cout << "|                 [-h]                                               |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   FILE:                                                            |" << endl;
+    cout << "|   Specify a path to an XML file in which the information about      |" << endl;
+    cout << "|   the models you wish to create are specified                       |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   MOVE:                                                            |" << endl;
+    cout << "|   w: Move UP (Translates upward, through the Y axis                |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   s: Move DOWN (Translates downward, through the Y axis            |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   a: Move LEFT (Translates leftward, through the X axis (negative) |" << endl;
+    cout << "|       and through the Z axis (positive)                            |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   d: Move RIGHT (Translates rightward through the X axis (positive)|" << endl;
+    cout << "|   and through the Z axis (negative)                                |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   1 : Increase X axis length                                       |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   2 : Increase Y axis length                                       |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   3 : Increase Z axis length                                       |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   + : Zoom In                                                      |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   - : Zoom Out                                                     |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   FORMAT:                                                          |" << endl;
+    cout << "|   p: Change the figure format into points                           |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   l: Change the figure format into lines                            |" << endl;
+    cout << "|                                                                    |" << endl;
+    cout << "|   o: Fill up the figure                                             |" << endl;
+    cout << "#____________________________________________________________________#" << endl;
 }
 
 // Responsible for our Window Reshaping
@@ -88,6 +88,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_x); // Translation of "5+axes_x", relative to the Z Axis
     glColor3f(1.0f,0.0f,0.0f); // Color of our X Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_x"
     glTranslatef(0,0,-5-axes_x); // Translates to the initial position - origin
     glRotatef(-90.f,0,1,0); // Rotates to the initial position - origin
@@ -97,6 +98,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_y); // Translation of "5+axes_y", relative to the Z Axis
     glColor3f(0.0f,1.0f,0.0f); // Color of our Y Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_y"
     glTranslatef(0,0,-5-axes_y); // Translates to the initial position - origin
     glRotatef(90.f,1,0,0); // Rotates to the initial position - origin
@@ -105,6 +107,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_z); // Translation of "5+axes_z", relative to the Z Axis
     glColor3f(0.0f,0.0f,1.0f); // Color of our Z Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_z"
     glTranslatef(0,0,-5-axes_z); // Translates to the initial position - origin
 
