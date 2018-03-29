@@ -1,13 +1,13 @@
 #include <vector>
 #include <string>
-#include <fstream>
 #include <iostream>
 #include <GL/glut.h>
 
 #include "tinyxml2.h"
-#include "../src/vertex.h"
+#include "group.h"
+#include "parser.h"
 
-using namespace tinyxml2;
+
 using namespace std;
 using std::vector;
 
@@ -15,10 +15,9 @@ float camX = 10, camY = 5, camZ = 10; // Camera var's
 float r_x = 1,r_y = 1; // Rotation var's
 float t_x,t_y,t_z; // Translation var's
 float axes_x, axes_y, axes_z; // Axis length var's
-float R2 = 1, B2 = 1, G2 = 1; // Triangle color
-float R3 = 1, B3 = 1, G3 = 1; // Triangle secondary color
+float R = 1, B = 1, G = 1; // Triangle color
 
-vector<Vertex*> models; // Global struct
+Group* scene = new Group();  // Global struct
 int draw_mode = GL_LINE;
 
 // Prints our Engine's Guide to Success!
@@ -151,6 +150,32 @@ void drawAxis(){
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,'Z');
 }
 
+void render(Group* g){
+    glPushMatrix();
+
+    vector<Transform*> t_list = g->getTransforms();
+    for(Transform *t: t_list) t->perform();
+
+    vector<Shape*> m_list = g->getModels();
+    for(Shape *s: m_list){
+        vector<Vertex*> v_list = s->getVertexes();
+
+        glPolygonMode(GL_FRONT_AND_BACK,draw_mode); // Changes how our shapes are represented (drawn). Lines, Points or Filled
+        glBegin(GL_TRIANGLES);
+
+        for(int i = 0; i<s->getSize();i++){
+            glVertex3f(v_list[i]->getX(),v_list[i]->getY(),v_list[i]->getZ());
+        }
+
+        glEnd();
+    }
+
+    vector<Group*> c_list = g->getChilds();
+    for(Group *c: c_list) render(c);
+
+    glPopMatrix();
+}
+
 void renderScene(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -165,25 +190,7 @@ void renderScene(void){
     glRotatef(r_x,1,0,0); // Rotates relatively to the Z axis (-1º or +1º)
 
     drawAxis(); // Draws Axis
-
-    glPolygonMode(GL_FRONT_AND_BACK,draw_mode); // Changes how our shapes are represented (drawn). Lines, Points or Filled
-    glBegin(GL_TRIANGLES);
-
-    // Goes through all our models's vertexes and draws them
-    for(int i = 0; (i < models.size()) && ((models[i]) || (models[i])); i+=6){
-        glColor3f(R2,G2,B2);
-        glVertex3f(models[i]->getX(),models[i]->getY(),models[i]->getZ());
-        glVertex3f(models[i+1]->getX(),models[i+1]->getY(),models[i+1]->getZ());
-        glVertex3f(models[i+2]->getX(),models[i+2]->getY(),models[i+2]->getZ());
-        glColor3f(R3,G3,B3);
-        glVertex3f(models[i+3]->getX(),models[i+3]->getY(),models[i+3]->getZ());
-        glVertex3f(models[i+4]->getX(),models[i+4]->getY(),models[i+4]->getZ());
-        glVertex3f(models[i+5]->getX(),models[i+5]->getY(),models[i+5]->getZ());
-
-    }
-
-    glEnd();
-
+    render(scene);
     glutSwapBuffers();
 }
 
@@ -225,45 +232,45 @@ void keyboardControls(unsigned char key, int x, int y){
             break;
 
         case 'e': // -0.05 RED Color
-            R2-=0.05;
+            R-=0.05;
             break;
 
         case 'r': // Changes Shape's Color to RED
-            R2 = 1; R3=1;
-            B2 = 0; B3 = 1;
-            G2 = 0; G3 = 1;
+            R = 1;
+            B = 0;
+            G = 0; ;
             break;
 
         case 't':
-            R2+=0.05; // +0.05 RED Color
+            R+=0.05; // +0.05 RED Color
             break;
 
         case 'f':
-            G2-=0.05; // -0.05 GREEN Color
+            G-=0.05; // -0.05 GREEN Color
             break;
 
         case 'g': // Changes Shape's Color to GREEN
-            R2 = 0;
-            G2 = 1;
-            B2 = 0;
+            R = 0;
+            G = 1;
+            B = 0;
             break;
 
         case 'h': // +0.05 GREEN Color
-            G2+=0.05;
+            G+=0.05;
             break;
 
         case 'v': // -0.05 BLUE Color
-            B2-=0.05;
+            B-=0.05;
             break;
 
         case 'b': // Changes Shape's Color to BLUE
-            R2 = 0;
-            G2 = 0;
-            B2 = 1;
+            R = 0;
+            G = 0;
+            B = 1;
             break;
 
         case 'n': // +0.05 BLUE Color
-            B2+=0.05;
+            B+=0.05;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -302,7 +309,7 @@ void keyboardControls(unsigned char key, int x, int y){
             camX = 10; camY = 10; camZ = 10;
             r_x = 1; r_y = 1;
             t_x = 0; t_y = 0; t_z = 0;
-            R2=1,G2=1,B2=1;R3=1,G3=1,B3=1;
+            R=1,G=1,B=1;
             axes_x = 0;
             axes_y = 0;
             axes_z = 0;
@@ -311,43 +318,6 @@ void keyboardControls(unsigned char key, int x, int y){
 
     glutPostRedisplay(); // Projects  the changes made at the moment a key is pressed
 }
-
-// Reads the ".3d" files, inside the given XML file and inserts all Vertexes in our Global Struct "vector<Vertex*> models"
-void readFile(string m_file) {
-    string line;
-    ifstream file(m_file);
-
-    if (file.fail()) {
-        throw std::ios_base::failure(string("Couldn't find file: ") + m_file);
-    }
-
-    else {
-        while (getline(file, line)) {
-            Vertex *v = new Vertex(line);
-            models.push_back(v);
-        }
-    }
-    file.close();
-}
-
-// Parses through the XML File, while getting the "model" attribute informations
-void readXML(string  f_path){
-    XMLDocument xmlDoc;
-    XMLElement *element;
-
-    if (!(xmlDoc.LoadFile(f_path.c_str()))) {
-
-        element = xmlDoc.FirstChildElement(); //ROOT ELEMENT (<scene>)
-        for (element = element->FirstChildElement(); element; element = element->NextSiblingElement()) { // Iterates between Elements
-            string ficheiro = element->Attribute("file"); // Gets file information, on each Model Attribute
-            readFile(ficheiro); // Gets model's vertexes
-        }
-    }
-    else {
-        cout << "XML File " + f_path + " could not be found" << endl;
-    }
-}
-
 
 int main(int argc, char** argv){
 
@@ -367,7 +337,7 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    else readXML(argv[1]); // Read XML File
+    else readXML(argv[1],scene); // Read XML File
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);

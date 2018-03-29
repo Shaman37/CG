@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 set( CMAKE_CXX_FLAGS "-Wall -O3 -g" )
 
 project(engine)
-set(ENGINE_FILES ./engine/engine.cpp ./engine/tinyxml2.cpp ./src/vertex.cpp ./src/shape.cpp)
+set(ENGINE_FILES ./engine/engine.cpp ./engine/tinyxml2.cpp ./engine/group.cpp ./engine/transforms.cpp ./engine/parser.cpp ./src/vertex.cpp ./src/shape.cpp)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 

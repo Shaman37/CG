@@ -150,7 +150,7 @@ void writeFile(Shape* s, string f_path){
     ofstream file (path,std::ofstream::out);
 
     for(i=0;i<size;i++){
-        s->getVertex(i,&v);
+        s->getVertexAt(i,&v);
         sprintf(buff, "%f %f %f\n", v->getX(), v->getY(), v->getZ());
         file << buff;
     }
