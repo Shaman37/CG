@@ -96,6 +96,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_x); // Translation of "5+axes_x", relative to the Z Axis
     glColor3f(1.0f,0.0f,0.0f); // Color of our X Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_x"
     glTranslatef(0,0,-5-axes_x); // Translates to the initial position - origin
     glRotatef(-90.f,0,1,0); // Rotates to the initial position - origin
@@ -105,6 +106,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_y); // Translation of "5+axes_y", relative to the Z Axis
     glColor3f(0.0f,1.0f,0.0f); // Color of our Y Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_y"
     glTranslatef(0,0,-5-axes_y); // Translates to the initial position - origin
     glRotatef(90.f,1,0,0); // Rotates to the initial position - origin
@@ -113,6 +115,7 @@ void drawAxis(){
     glTranslatef(0,0,5+axes_z); // Translation of "5+axes_z", relative to the Z Axis
     glColor3f(0.0f,0.0f,1.0f); // Color of our Z Arrow Head
     glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
+    
     // This cone stays in the previously  translated position. In this case "5+axes_z"
     glTranslatef(0,0,-5-axes_z); // Translates to the initial position - origin
 
