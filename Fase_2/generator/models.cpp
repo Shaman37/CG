@@ -267,9 +267,34 @@ Shape* createCylinder(float radius, float height, int slices, int stacks){
     return cylinder;
 }
 
-// Torus
+Shape* createTorus(float distance, float radius, int slices, int stacks){
+    Shape* torus = new Shape();
+
+    float theta = 0;
+    float phi = 0;
+    float theta_shift = (2*M_PI)/slices;
+    float phi_shift = (2*M_PI)/stacks;
+
+    for(int i = 0; i < slices; i++){
+        for(int j = 0; j < stacks; j++){
+            torus->pushVertex(new Vertex((cos(theta)*(distance + radius * cos(phi))), (sin(theta)*(distance + radius * cos(phi))), (radius*sin(phi))));
+            torus->pushVertex(new Vertex((cos(theta + theta_shift)*(distance + radius * cos(phi))), (sin(theta + theta_shift)*(distance + radius * cos(phi))), (radius*sin(phi))));
+            torus->pushVertex(new Vertex((cos(theta + theta_shift)*(distance + radius * cos(phi + phi_shift))), (sin(theta+theta_shift)*(distance + radius * cos(phi+phi_shift))), (radius*sin(phi+phi_shift))));
+
+            torus->pushVertex(new Vertex((cos(theta + theta_shift)*(distance + radius * cos(phi + phi_shift))), (sin(theta+theta_shift)*(distance + radius * cos(phi+phi_shift))), (radius*sin(phi+phi_shift))));
+            torus->pushVertex(new Vertex((cos(theta)*(distance + radius * cos(phi + phi_shift))), (sin(theta)*(distance + radius * cos(phi + phi_shift))), (radius*sin(phi + phi_shift))));
+            torus->pushVertex(new Vertex((cos(theta)*(distance + radius * cos(phi))), (sin(theta)*(distance + radius * cos(phi))), (radius*sin(phi))));
+
+            phi = phi_shift * (j + 1);
+        }
+        theta = theta_shift * (i + 1);
+    }
+//torus 5 3 20 20 torus.3d
+    return torus;
+}
 
 // Polyhedrons
+
 //Tetra
 //Octa
 //Dodeca

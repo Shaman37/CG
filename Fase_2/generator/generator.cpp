@@ -15,6 +15,7 @@ void generateBox(char*width, char*height, char*length, char*div, char* f_path);
 void generateCone(char* radius, char* height, char* slices, char* stacks, char* f_path);
 void generateSphere(char*radius, char* slices, char* stacks, char* f_path);
 void generateCylinder(char* radius, char* height, char* slices, char* stacks, char* f_path);
+void generateTorus(char* distance, char* radius, char* slices, char* stacks, char* f_path);
 void writeFile(Shape* s, string f_path);
 void printGuide();
 
@@ -39,6 +40,9 @@ int main(int argc, char** argv){
         // argv[1] = cylinder -- argv[2] = radius -- argv[3] = height -- argv[4] = Slices -- argv[5] = Stacks -- argv[6] = file path
     else if(!(strcmp(argv[1],"cylinder")) && (argc == 7))
         generateCylinder(argv[2],argv[3],argv[4],argv[5],argv[6]);
+
+    else if(!(strcmp(argv[1],"torus")) && (argc == 7))
+        generateTorus(argv[2],argv[3],argv[4],argv[5],argv[6]);
 
     else if(!(strcmp(argv[1],"-help")) || !(strcmp(argv[1],"-h")))
         printGuide();
@@ -138,6 +142,21 @@ void generateCylinder(char* radius, char* height, char* slices, char* stacks, ch
     }
 }
 
+void generateTorus(char* distance, char* radius, char* slices, char* stacks, char* f_path){
+    float d,r;
+    int sl,st;
+
+    d = atof(distance);
+    r = atof(radius);
+    sl = atoi(slices);
+    st = atoi(stacks);
+
+    ofstream file;
+
+    Shape *tr = createTorus(d,r,sl,st);
+    writeFile(tr,f_path);
+}
+
 // Writes all our Shape's Vertexes on the desired file ("f_path")
 void writeFile(Shape* s, string f_path){
     char buff[1024];
@@ -159,7 +178,6 @@ void writeFile(Shape* s, string f_path){
 }
 
 // Prints the Generator's Guide to success!
-
 void printGuide() {
     std::cout << "              ---- Generator [GUIDE] ----        " << std::endl;
     std::cout << "Guidelines: generate <shape> [options] <file>" << std::endl;

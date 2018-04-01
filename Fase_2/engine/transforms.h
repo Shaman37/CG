@@ -49,5 +49,13 @@ public:
     virtual ~Scale(void);
 };
 
+class Colour : public Transform{
+
+public:
+    Colour(float r, float g, float b);
+    void perform();
+    virtual  ~Colour(void);
+};
+
 #endif
 

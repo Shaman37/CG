@@ -78,3 +78,20 @@ void Scale::perform(){
 
 Scale::~Scale(void){
 }
+
+/* COLOUR DEFINITION */
+
+Colour::Colour(float r, float g, float b):Transform(r,g,b){
+
+}
+
+void Colour::perform(){
+    float r = getX()/255;
+    float g = getY()/255;
+    float b = getZ()/255;
+    glColor3f(r,g,b);
+}
+
+Colour::~Colour(void){
+
+}

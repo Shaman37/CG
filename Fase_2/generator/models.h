@@ -10,6 +10,7 @@ Shape* createBox(float width, float height, float length, int div);
 Shape* createCone(float radius, float height, int slices, int stacks);
 Shape* createCylinder(float radius, float height, int slices, int stacks);
 Shape* createSphere(float radius, int slices, int stacks);
+Shape* createTorus(float distance, float radius, int slices, int stacks);
 
 #endif
 

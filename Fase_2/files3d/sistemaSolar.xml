@@ -1,0 +1,173 @@
+<scene>
+    <!-- SUN  -->
+    <group>
+        <scale X='5' Y='5' Z='5' />
+        <colour R='251' G='119' B='9' />
+        <models>
+            <model file='../files3d/sphere.3d'/>
+        </models>
+    </group>
+    <!-- ORBITS -->
+
+    <!-- MERCURY'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='29.8775' Y='29.8775' Z='29.8775'/>
+        <colour R='219' G='170' B='0' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- VENUS'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='33.9233' Y='33.9233' Z='33.9233'/>
+        <colour R='254' G='198' B='115' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- EARTH'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='36.9233' Y='36.9233' Z='36.9233'/>
+        <colour R='0' G='0' B='220' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- ASTEROID BELT -->
+
+    <!-- MARS'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='47.9523' Y='47.9523' Z='47.9523'/>
+        <colour R='254' G='135' B='1' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- JUPITER'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='51.12987' Y='51.12987' Z='51.12987'/>
+        <colour R='231' G='232' B='197' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- SATURN'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='79.5005' Y='79.5005' Z='79.5005'/>
+        <colour R='255' G='223' B='161' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- URANU'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='88.0747' Y='88.0747' Z='88.0747'/>
+        <colour R='148' G='193' B='255' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+    <!-- NEPTUN'S ORBIT -->
+    <group>
+        <rotate angle='90' X='1' />
+        <scale X='112.35529' Y='112.35529' Z='112.35529'/>
+        <colour R='0' G='83' B='255' />
+        <models>
+            <model file='../files3d/orbit.3d' />
+        </models>
+    </group>
+
+    <!-- PLANETS AND SATELITES -->
+
+    <!-- MERCURY -->
+    <group>
+        <translate X='29.8775' />
+        <scale X='0.17625' Y='0.17625' Z='0.17625'/>
+        <colour R='219' G='170' B='0' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+    <!-- VENUS -->
+    <group>
+        <translate X='33.9233' />
+        <scale X='0.4395' Y='0.4395' Z='0.4395'/>
+        <colour R='254' G='198' B='115' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+    <!-- EARTH -->
+    <group>
+        <translate X='36.9233' />
+        <colour R='0' G='0' B='220' />
+        <scale X='0.4425' Y='0.4425' Z='0.4425'/>
+            <models>
+                <model file='../files3d/sphere.3d' />
+            </models>
+    </group>
+    <!-- MARS -->
+    <group>
+        <translate X='47.9523' />
+        <scale X='0.1860' Y='0.1860' Z='0.1860'/>
+        <colour R='254' G='135' B='1' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+    <!-- JUPITER -->
+    <group>
+        <translate X='51.12987' />
+        <scale X='1.125' Y='1.125' Z='1.125'/>
+        <colour R='231' G='232' B='197' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+    <!-- SATURN-->
+    <group>
+        <translate X='79.5005' />
+        <scale X='0.9975' Y='0.9975' Z='0.9975'/>
+        <colour R='255' G='223' B='161' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+        <!-- SATURN'S RINGS -->
+        <group>
+            <rotate  angle='90' X='1' />
+            <group>
+                <rotate angle='27' Y='1' />
+                <scale X='1.5' Y='1.5' />
+                <colour R='200' G='200' B='190' />
+                <models>
+                    <model file='../files3d/ring.3d' />
+                </models>
+            </group>
+        </group>
+    </group>
+    <!-- URANUS -->
+    <group>
+        <translate X='88.0747' />
+        <scale X='0.645' Y='0.645' Z='0.645'/>
+        <colour R='148' G='193' B='255' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+    <!-- NEPTUN -->
+    <group>
+        <translate X='112.35529' />
+        <scale X='0.6375' Y='0.6375' Z='0.6375'/>
+        <colour R='0' G='83' B='255' />
+        <models>
+            <model file='../files3d/sphere.3d' />
+        </models>
+    </group>
+</scene>

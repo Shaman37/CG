@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <math.h>
 #include <GL/glut.h>
 
 #include "tinyxml2.h"
@@ -11,11 +12,21 @@
 using namespace std;
 using std::vector;
 
-float camX = 10, camY = 5, camZ = 10; // Camera var's
-float r_x = 1,r_y = 1; // Rotation var's
-float t_x,t_y,t_z; // Translation var's
-float axes_x, axes_y, axes_z; // Axis length var's
-float R = 1, B = 1, G = 1; // Triangle color
+float dir_x;
+float dir_y;
+float dir_z;
+
+float h_angle;
+float v_angle;
+
+float pos_x;
+float pos_y;
+float pos_z;
+
+float speed = 0.1;
+float rotSpeed = 0.001;
+
+int window;
 
 Group* scene = new Group();  // Global struct
 int draw_mode = GL_LINE;
@@ -42,23 +53,9 @@ void printHelp(){
     cout << "|   d: Move RIGHT (Translates rightward through the X axis (positive)|" << endl;
     cout << "|   and through the Z axis (negative)                                                                 |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   1 : Increase X axis length                                                                                |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   2 : Increase Y axis length                                                                                |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   3 : Increase Z axis length                                                                                |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
     cout << "|   + : Zoom In                                                                                                                |" << endl;
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   - : Zoom Out                                                                                                              |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   COLOR:                                                                                                                       |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   r : Red and White Color                                                                                       |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   g :  Green and White Color                                                                                  |" << endl;
-    cout << "|                                                                                                                                      |" << endl;
-    cout << "|   b : Blue and White Color                                                                                      |" << endl;
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   FORMAT:                                                                                                                     |" << endl;
     cout << "|   p: Change the figure format into points                                                     |" << endl;
@@ -70,7 +67,7 @@ void printHelp(){
 }
 
 // Responsible for our Window Reshaping
-void changeSize(int w, int h) {
+void changeSize(int w, int h){
 
     if (h == 0)
         h = 1;
@@ -82,72 +79,6 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
     gluPerspective(45.0f, ratio, 1.0f, 1000.0f);
     glMatrixMode(GL_MODELVIEW);
-}
-
-// Responsible for our XYZ Axis Drawing
-void drawAxis(){
-
-    // Draw mode of Axis's Arrow Heads (FILLED)
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
-    // Arrow Head of X Axis (RED)
-    glRotatef(90.f,0,1,0); // Rotation of 90º Degrees, relative to the Y Axis... Now our Z axis, assumes the initial position of the X axis.
-    glTranslatef(0,0,5+axes_x); // Translation of "5+axes_x", relative to the Z Axis
-    glColor3f(1.0f,0.0f,0.0f); // Color of our X Arrow Head
-    glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
-    // This cone stays in the previously  translated position. In this case "5+axes_x"
-    glTranslatef(0,0,-5-axes_x); // Translates to the initial position - origin
-    glRotatef(-90.f,0,1,0); // Rotates to the initial position - origin
-
-    // Arrow Head of Y Axis (GREEN)
-    glRotatef(-90.f,1,0,0); // Rotation of -90º Degrees, relative to the X Axis... Now our Z axis, assumes the initial position of the Y axis.
-    glTranslatef(0,0,5+axes_y); // Translation of "5+axes_y", relative to the Z Axis
-    glColor3f(0.0f,1.0f,0.0f); // Color of our Y Arrow Head
-    glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
-    // This cone stays in the previously  translated position. In this case "5+axes_y"
-    glTranslatef(0,0,-5-axes_y); // Translates to the initial position - origin
-    glRotatef(90.f,1,0,0); // Rotates to the initial position - origin
-
-    // Arrow Head of Z Axis (BLUE)
-    glTranslatef(0,0,5+axes_z); // Translation of "5+axes_z", relative to the Z Axis
-    glColor3f(0.0f,0.0f,1.0f); // Color of our Z Arrow Head
-    glutSolidCone(0.1,0.3,5,5); // Arrow Head is drawn, as a solid cone. Base on Z=0, Height on Z=0.3, Radius of 0.3 {5 slices and 5 stacks}.
-    // This cone stays in the previously  translated position. In this case "5+axes_z"
-    glTranslatef(0,0,-5-axes_z); // Translates to the initial position - origin
-
-    glBegin(GL_LINES);
-
-    // Line of X Axis (RED) - From (0,0,0) to (5+axes_x,0,0)
-    glColor3f(1.0,0,0);
-    glVertex3f(0,0,0);
-    glVertex3f(5 + axes_x,0,0);
-
-    // Line of Y Axis (GREEN) - From (0,0,0) to (0,5+axes_y,0)
-    glColor3f(0,1.0,0);
-    glVertex3f(0,0,0);
-    glVertex3f(0,5 + axes_y,0);
-
-    // Line of Z Axis (BLUE) - From (0,0,0) to (0,0,5+axes_z)
-    glColor3f(0,0,1.0);
-    glVertex3f(0,0,0);
-    glVertex3f(0,0,5 + axes_z);
-
-    glEnd();
-
-    // Letter X coloring (RED) and positioning (5+axes_x+0.5,0,0)
-    glColor3f(1.0,0,0);
-    glRasterPos3f((5 + axes_x + 0.5),0,0);
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,'X');
-
-    // Letter Y coloring (GREEN) and positioning (0,5+axes_y+0.5,0)
-    glColor3f(0,1.0,0);
-    glRasterPos3f(0,(5 + axes_y + 0.5),0);
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,'Y');
-
-    // Letter Z coloring (BLUE) and positioning (0,0,5+axes_z+0.5)
-    glColor3f(0,0,1.0);
-    glRasterPos3f(0,0,(5 + axes_z + 0.5));
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,'Z');
 }
 
 void render(Group* g){
@@ -180,97 +111,40 @@ void renderScene(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
-    gluLookAt(camX, camY, camZ, // Position setting of our "eye" aka Camera
-              0.0, 0.0, 0.0, // Sets the position we are looking at
-              0.0f, 1.0f, 0.0f); // Sets the direction of the Up Vector (the axis which is upwards)
 
+    gluLookAt(	pos_x, pos_y, pos_z,
+                  pos_x+dir_x, pos_y+dir_y,  pos_z+dir_z,
+                  0.0f, 1.0f,  0.0f);
 
-    glTranslatef(t_x, t_y, t_z); // Translates the object's positioning, as well as the XYZ axis
-    glRotatef(r_y,0,1,0); // Rotates relatively to the Y axis (-1º or +1º)
-    glRotatef(r_x,1,0,0); // Rotates relatively to the Z axis (-1º or +1º)
-
-    drawAxis(); // Draws Axis
+    glTranslatef(30,50,20);
     render(scene);
     glutSwapBuffers();
 }
-
-void keyboardSpecial(int key_code, int x , int y){
-
-    switch(key_code){
-        case GLUT_KEY_UP: r_x-=2.0; // Rotates X, +1º
-            break;
-        case GLUT_KEY_DOWN:	r_x+=2.0; // Rotates X, -1º
-            break;
-        case GLUT_KEY_LEFT: r_y-=2.0; // Rotates Y, +1º
-            break;
-        case GLUT_KEY_RIGHT: r_y+=2.0; // Rotates Y, -1º
-            break;
-    }
-
-    glutPostRedisplay();
-}
+bool mouseCaptured = true;
 
 void keyboardControls(unsigned char key, int x, int y){
     switch (key) {
 
-        case 'a': // Translates to the Left
-            t_x -= 2;
-            t_z += 2;
-            break;
-
-        case 'd': // Translates to the Right
-            t_x += 2;
-            t_z -= 2;
-            break;
-
         case 'w': // Translates Upward
-            t_y += 2;
+            pos_x += dir_x * speed;
+			pos_y += dir_y * speed;
+            pos_z += dir_z * speed;
             break;
 
         case 's': // Translates Downward
-            t_y -= 2;
+            pos_x -= dir_x * speed;
+            pos_y -= dir_y * speed;
+            pos_z -= dir_z * speed;
             break;
 
-        case 'e': // -0.05 RED Color
-            R-=0.05;
+        case 'a': // Translates to the Left
+pos_x += dir_z * speed;
+pos_z -= dir_x * speed;
             break;
 
-        case 'r': // Changes Shape's Color to RED
-            R = 1;
-            B = 0;
-            G = 0; ;
-            break;
-
-        case 't':
-            R+=0.05; // +0.05 RED Color
-            break;
-
-        case 'f':
-            G-=0.05; // -0.05 GREEN Color
-            break;
-
-        case 'g': // Changes Shape's Color to GREEN
-            R = 0;
-            G = 1;
-            B = 0;
-            break;
-
-        case 'h': // +0.05 GREEN Color
-            G+=0.05;
-            break;
-
-        case 'v': // -0.05 BLUE Color
-            B-=0.05;
-            break;
-
-        case 'b': // Changes Shape's Color to BLUE
-            R = 0;
-            G = 0;
-            B = 1;
-            break;
-
-        case 'n': // +0.05 BLUE Color
-            B+=0.05;
+        case 'd': // Translates to the Right
+pos_x -= dir_z * speed;
+pos_z += dir_x * speed;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -284,39 +158,46 @@ void keyboardControls(unsigned char key, int x, int y){
         case 'm': // Sets our Models to be filled
             draw_mode = GL_FILL;
             break;
-
-        case '-': // Zoom Out Camera
-            gluLookAt(camX += 0.5, camY += 0.5, camZ += 0.5, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
+        case 'f':
+            glutFullScreen();
             break;
 
-        case '+': // Zoom In Camera
-            gluLookAt(camX -= 0.5, camY -= 0.5, camZ -= 0.5, 0.0, 0.0, 0.0, 0.0f, 1.0f, 0.0f);
+        case '+':
+            speed+=0.05;
             break;
 
-        case '1': // Increases X axis length
-            axes_x +=1;
+        case '-':
+            speed-=0.05;
             break;
-
-        case '2': // Increases Y axis length
-            axes_y +=1;
-            break;
-
-        case '3': // Increases Z axis length
-            axes_z +=1;
-            break;
-
-        case 'c': // Resets all changes to the default settings
-            camX = 10; camY = 10; camZ = 10;
-            r_x = 1; r_y = 1;
-            t_x = 0; t_y = 0; t_z = 0;
-            R=1,G=1,B=1;
-            axes_x = 0;
-            axes_y = 0;
-            axes_z = 0;
-            draw_mode = GL_LINE;
+        case 27:
+            glutDestroyWindow(window);
+            exit(0);
     }
 
     glutPostRedisplay(); // Projects  the changes made at the moment a key is pressed
+}
+
+bool warping = false;
+void mouseMove(int x, int y)
+{
+    if(warping)
+    {
+        warping = false;
+        return;
+    }
+    int dx = x - 100;
+    int dy = y - 100;
+    h_angle = h_angle+dx*rotSpeed;
+    v_angle = v_angle+dy*rotSpeed;
+    dir_x=sin(v_angle)*sin(h_angle);
+    dir_y=-cos(v_angle);
+    dir_z=-sin(v_angle)*cos(h_angle);
+
+    if(mouseCaptured)
+    {
+        warping = true;
+        glutWarpPointer(100,100);
+    }
 }
 
 int main(int argc, char** argv){
@@ -324,8 +205,8 @@ int main(int argc, char** argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100,100);
-    glutInitWindowSize(800,800);
-    glutCreateWindow("Engine - @CG2018");
+    glutInitWindowSize(1540,890);
+    window = glutCreateWindow("Engine - @CG2018");
 
      if(argc < 2){
         cout << "Invalid input. Use -h if you need some help." << endl;
@@ -341,8 +222,12 @@ int main(int argc, char** argv){
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutSpecialFunc(keyboardSpecial);
+    glutIdleFunc(renderScene);
     glutKeyboardFunc(keyboardControls);
+    glutPassiveMotionFunc(mouseMove);
+
+    glutSetCursor(GLUT_CURSOR_NONE);
+    glutWarpPointer(100,100);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -351,4 +236,3 @@ int main(int argc, char** argv){
 
     return 1;
 }
-

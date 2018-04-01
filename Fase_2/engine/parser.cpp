@@ -43,6 +43,19 @@ void parseScale(XMLElement* element, Group* g){
     g->pushTransform(s);
 }
 
+void parseColour(XMLElement* element, Group *g){
+    float red = 0;
+    float green = 0;
+    float blue = 0;
+
+    element->QueryFloatAttribute("R",&red);
+    element->QueryFloatAttribute("G",&green);
+    element->QueryFloatAttribute("B",&blue);
+
+    Colour* c = new Colour(red,green,blue);
+    g->pushTransform(c);
+}
+
 void parseModels(XMLElement* element, Group* g){
     vector<Shape*> models;
     string path;
@@ -87,6 +100,8 @@ void parseGroup(XMLElement* element, Group* g){
         parseScale(element,g);
     else if (!(strcmp(element->Name(), "models")))
         parseModels(element,g);
+    else if (!(strcmp(element->Name(), "colour")))
+        parseColour(element,g);
     else if (!(strcmp(element->Name(), "group"))) {
         Group *child = new Group();
         g->pushChild(child);
