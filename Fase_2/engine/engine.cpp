@@ -12,19 +12,22 @@
 using namespace std;
 using std::vector;
 
-float dir_x;
-float dir_y;
-float dir_z;
+float dir_x = 0;
+float dir_y = 0;
+float dir_z = 0;
 
 float h_angle;
 float v_angle;
 
-float pos_x;
-float pos_y;
-float pos_z;
+float pos_x=30;
+float pos_y = 5;
+float pos_z= 10;
 
-float speed = 0.1;
+float speed = 0.3;
 float rotSpeed = 0.001;
+
+bool mouseCaptured = true;
+bool warping = false;
 
 int window;
 
@@ -43,19 +46,17 @@ void printHelp(){
     cout << "|   the models you wish to create are specified                                          |" << endl;
     cout << "|                                                                                                                                     |" << endl;
     cout << "|   MOVE:                                                                                                                        |" << endl;
-    cout << "|   w: Move UP (Translates upward, through the Y axis                                  |" << endl;
+    cout << "|   w: Move Foward                                                                                                       |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   s: Move DOWN (Translates downward, through the Y axis                         |" << endl;
+    cout << "|   s: Move Back                                                                                                            |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   a: Move LEFT (Translates leftward, through the X axis (negative)    |" << endl;
-    cout << "|       and through the Z axis (positive)                                                             |" << endl;
+    cout << "|   a: Strafe Left                                                                                                        |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   d: Move RIGHT (Translates rightward through the X axis (positive)|" << endl;
-    cout << "|   and through the Z axis (negative)                                                                 |" << endl;
+    cout << "|   d: Strafe Right                                                                                                     |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   + : Zoom In                                                                                                                |" << endl;
+    cout << "|   + : Increase Camera Speed                                                                                 |" << endl;
     cout << "|                                                                                                                                      |" << endl;
-    cout << "|   - : Zoom Out                                                                                                              |" << endl;
+    cout << "|   - : Decrease Camera Speed                                                                                  |" << endl;
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   FORMAT:                                                                                                                     |" << endl;
     cout << "|   p: Change the figure format into points                                                     |" << endl;
@@ -63,6 +64,11 @@ void printHelp(){
     cout << "|   l: Change the figure format into lines                                                       |" << endl;
     cout << "|                                                                                                                                       |" << endl;
     cout << "|   o: Fill up the figure                                                                                           |" << endl;
+    cout << "|                                                                                                                                      |" << endl;
+    cout << "|   WINDOW:                                                                                                                    |" << endl;
+    cout << "|   f: Change to Fullscreen Mode                                                                          |" << endl;
+    cout << "|                                                                                                                                      |" << endl;
+    cout << "|   ESC: Close Window                                                                                                |" << endl;
     cout << "#__________________________________________________________________________________________#" << endl;
 }
 
@@ -112,15 +118,17 @@ void renderScene(void){
 
     glLoadIdentity();
 
-    gluLookAt(	pos_x, pos_y, pos_z,
-                  pos_x+dir_x, pos_y+dir_y,  pos_z+dir_z,
-                  0.0f, 1.0f,  0.0f);
+    gluLookAt(pos_x, pos_y, pos_z,
+                             pos_x + dir_x, pos_y + dir_y, pos_z + dir_z,
+                             0.0f, 1.0f, 0.0f);
 
-    glTranslatef(30,50,20);
     render(scene);
     glutSwapBuffers();
 }
-bool mouseCaptured = true;
+
+/* *****************  */
+/* KEYBORD CONTROLS */
+/* *****************  */
 
 void keyboardControls(unsigned char key, int x, int y){
     switch (key) {
@@ -138,13 +146,13 @@ void keyboardControls(unsigned char key, int x, int y){
             break;
 
         case 'a': // Translates to the Left
-pos_x += dir_z * speed;
-pos_z -= dir_x * speed;
+            pos_x += dir_z * speed;
+            pos_z -= dir_x * speed;
             break;
 
         case 'd': // Translates to the Right
-pos_x -= dir_z * speed;
-pos_z += dir_x * speed;
+            pos_x -= dir_z * speed;
+            pos_z += dir_x * speed;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -158,6 +166,7 @@ pos_z += dir_x * speed;
         case 'm': // Sets our Models to be filled
             draw_mode = GL_FILL;
             break;
+
         case 'f':
             glutFullScreen();
             break;
@@ -169,6 +178,7 @@ pos_z += dir_x * speed;
         case '-':
             speed-=0.05;
             break;
+
         case 27:
             glutDestroyWindow(window);
             exit(0);
@@ -177,7 +187,10 @@ pos_z += dir_x * speed;
     glutPostRedisplay(); // Projects  the changes made at the moment a key is pressed
 }
 
-bool warping = false;
+/* *************** */
+/* MOUSE MOVEMENT */
+/* *************** */
+
 void mouseMove(int x, int y)
 {
     if(warping)
@@ -185,10 +198,13 @@ void mouseMove(int x, int y)
         warping = false;
         return;
     }
+
     int dx = x - 100;
     int dy = y - 100;
+
     h_angle = h_angle+dx*rotSpeed;
     v_angle = v_angle+dy*rotSpeed;
+
     dir_x=sin(v_angle)*sin(h_angle);
     dir_y=-cos(v_angle);
     dir_z=-sin(v_angle)*cos(h_angle);

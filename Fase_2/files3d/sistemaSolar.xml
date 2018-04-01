@@ -41,7 +41,7 @@
     <!-- MARS'S ORBIT -->
     <group>
         <rotate angle='90' X='1' />
-        <scale X='47.9523' Y='47.9523' Z='47.9523'/>
+        <scale X='42.9523' Y='42.9523' Z='42.9523'/>
         <colour R='254' G='135' B='1' />
         <models>
             <model file='../files3d/orbit.3d' />
@@ -112,10 +112,20 @@
             <models>
                 <model file='../files3d/sphere.3d' />
             </models>
+        <!-- MOON -->
+            <group>
+                <translate Y='0.75' Z='1.75' />
+                <colour R='255' G='255' B='255' />
+                <scale X='0.15' Y='0.15' Z='0.15'/>
+                <models>
+                    <model file='../files3d/sphere.3d' />
+                </models>
+            </group>
     </group>
+
     <!-- MARS -->
     <group>
-        <translate X='47.9523' />
+        <translate X='42.9523' />
         <scale X='0.1860' Y='0.1860' Z='0.1860'/>
         <colour R='254' G='135' B='1' />
         <models>
@@ -130,6 +140,44 @@
         <models>
             <model file='../files3d/sphere.3d' />
         </models>
+
+        <!--SATELITE N.-->
+        <group>
+            <translate X='0' Y='0' Z='1.875' />
+            <colour R='255' G='255' B='255' />
+            <scale X='0.025' Y='0.025' Z='0.025' />
+            <models>
+                <model file='../files3d/sphere.3d' />
+            </models>
+        </group>
+        <!--SATELITE N.-->
+        <group>
+            <translate X='1.425' Y='0.25' Z='-1.8074' />
+            <colour R='255' G='255' B='255' />
+            <scale X='0.0175' Y='0.0175' Z='0.0175' />
+            <models>
+                <model file='../files3d/sphere.3d' />
+            </models>
+        </group>
+        <!--SATELITE N.-->
+        <group>
+            <translate X='-1.00875' Y='-0.35' Z='1.3666' />
+            <colour R='255' G='255' B='255' />
+            <scale X='0.05' Y='0.05' Z='0.05' />
+            <models>
+                <model file='../files3d/sphere.3d' />
+            </models>
+        </group>
+        <!--SATELITE N.-->
+        <group>
+            <translate X='1.85175' Y='0' Z='0' />
+            <colour R='255' G='255' B='255' />
+            <scale X='0.055' Y='0.055' Z='0.055' />
+            <models>
+                <model file='../files3d/sphere.3d' />
+            </models>
+        </group>
+
     </group>
     <!-- SATURN-->
     <group>
@@ -145,11 +193,20 @@
             <group>
                 <rotate angle='27' Y='1' />
                 <scale X='1.5' Y='1.5' />
-                <colour R='200' G='200' B='190' />
+                <colour R='180' G='180' B='160' />
                 <models>
                     <model file='../files3d/ring.3d' />
                 </models>
             </group>
+        </group>
+        <!--SATELITE N.-->
+        <group>
+            <translate X="0" Y="0.6" Z="2..275" />
+            <colour R="255" G="255" B="255" />
+            <scale X="0.0575" Y="0.0575" Z="0.0575" />
+            <models>
+                <model file="../files3d/sphere.3d" />
+            </models>
         </group>
     </group>
     <!-- URANUS -->
@@ -169,5 +226,14 @@
         <models>
             <model file='../files3d/sphere.3d' />
         </models>
+        <!--SATELITE N.-->
+        <group>
+            <translate X="0" Y="0.75" Z="1.85" />
+            <colour R="255" G="255" B="255" />
+            <scale X="0.0575" Y="0.0575" Z="0.0575" />
+            <models>
+                <model file="../files3d/sphere.3d" />
+            </models>
+        </group>
     </group>
 </scene>
