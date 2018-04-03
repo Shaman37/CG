@@ -219,7 +219,6 @@ Shape* createSphere(float radius, int slices, int stacks){
 
         h= (i+1) * h_shift;
     }
-
     return sphere;
 }
 

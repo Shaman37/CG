@@ -21,18 +21,6 @@ float Transform::getZ(){
     return z_var;
 }
 
-void Transform::setX(float x){
-    x_var = x;
-}
-
-void Transform::setY(float y){
-    y_var = y;
-}
-
-void Transform::setZ(float z){
-    z_var = z;
-}
-
 /* TRANSLATION DEFINITION */
 
 Translation::Translation(float x, float y, float z) : Transform(x,y,z){
@@ -48,14 +36,6 @@ Translation::~Translation(void){
 /* ROTATION DEFINITION */
 
 Rotation::Rotation(float a, float x, float y, float z) : Transform(x,y,z){
-    angle = a;
-}
-
-float Rotation::getAngle(){
-    return angle;
-}
-
-void Rotation::setAngle(float a){
     angle = a;
 }
 

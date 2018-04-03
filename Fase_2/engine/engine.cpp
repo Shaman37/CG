@@ -23,16 +23,31 @@ float pos_x=30;
 float pos_y = 5;
 float pos_z= 10;
 
-float speed = 0.3;
-float rotSpeed = 0.001;
+float speed = 0.2;
+float rotSpeed = 0.00175;
 
 bool mouseCaptured = true;
 bool warping = false;
+
+int centerX;
+int centerY;
+
+bool foward = false;
+bool backward = false;
+bool strafe_left = false;
+bool strafe_right = false;
+bool turn_left = false;
+bool turn_right = false;
+
+bool fps_cam = false;
+bool fullscreen = false;
 
 int window;
 
 Group* scene = new Group();  // Global struct
 int draw_mode = GL_LINE;
+
+void camera();
 
 // Prints our Engine's Guide to Success!
 void printHelp(){
@@ -118,9 +133,7 @@ void renderScene(void){
 
     glLoadIdentity();
 
-    gluLookAt(pos_x, pos_y, pos_z,
-                             pos_x + dir_x, pos_y + dir_y, pos_z + dir_z,
-                             0.0f, 1.0f, 0.0f);
+    camera();
 
     render(scene);
     glutSwapBuffers();
@@ -130,29 +143,39 @@ void renderScene(void){
 /* KEYBORD CONTROLS */
 /* *****************  */
 
-void keyboardControls(unsigned char key, int x, int y){
+/* ---------------------- */
+
+/* ************ */
+/* ON KEY PRESS */
+/* ************ */
+
+/* ---------------------- */
+
+void keyboardPress(unsigned char key, int x, int y) {
     switch (key) {
 
         case 'w': // Translates Upward
-            pos_x += dir_x * speed;
-			pos_y += dir_y * speed;
-            pos_z += dir_z * speed;
+            foward = true;
             break;
 
         case 's': // Translates Downward
-            pos_x -= dir_x * speed;
-            pos_y -= dir_y * speed;
-            pos_z -= dir_z * speed;
+            backward = true;
             break;
 
         case 'a': // Translates to the Left
-            pos_x += dir_z * speed;
-            pos_z -= dir_x * speed;
+            strafe_left = true;
             break;
 
         case 'd': // Translates to the Right
-            pos_x -= dir_z * speed;
-            pos_z += dir_x * speed;
+            strafe_right = true;
+            break;
+
+        case 'q':
+            turn_left = true;
+            break;
+
+        case 'e':
+            turn_right = true;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -172,56 +195,473 @@ void keyboardControls(unsigned char key, int x, int y){
             break;
 
         case '+':
-            speed+=0.05;
+            speed += 0.05;
+            if(speed > 0.75) speed = 0.75;
             break;
 
         case '-':
-            speed-=0.05;
+            speed -= 0.05;
+            if (speed < 0.0) speed = 0.0;
+            break;
+
+        case '1':
+            fps_cam = true;
+            break;
+
+        case '3':
+            fps_cam = false;
             break;
 
         case 27:
-            glutDestroyWindow(window);
-            exit(0);
+                glutDestroyWindow(window);
+                exit(0);
     }
+}
 
-    glutPostRedisplay(); // Projects  the changes made at the moment a key is pressed
+/* ---------------------- */
+
+/* **************** */
+/* ON KEY REALEASE */
+/* **************** */
+
+/* ---------------------- */
+
+void keyboardRelease(unsigned char key, int x, int y){
+    switch (key) {
+
+        case 'w': // Translates Upward
+            foward = false;
+            break;
+
+        case 's': // Translates Downward
+            backward = false;
+            break;
+
+        case 'a': // Translates to the Left
+            strafe_left = false;
+            break;
+
+        case 'd': // Translates to the Right
+            strafe_right = false;
+            break;
+
+        case 'q':
+            turn_left = false;
+            break;
+
+        case 'e':
+            turn_right = false;
+            break;
+    }
+}
+
+void turnLeft(){
+    v_angle -= 1;
+    if (v_angle >360) v_angle -= 360;
+}
+
+void turnRight(){
+    v_angle += 1;
+    if (v_angle >360) v_angle -= 360;
+}
+
+/* ************ */
+/* FPS CAM CALC */
+/* ************ */
+
+void move_foward_f(){
+    pos_x += dir_x * speed;
+    pos_y += dir_y * speed;
+    pos_z += dir_z * speed;
+}
+
+void move_back_f(){
+    pos_x -= dir_x * speed;
+    pos_y -= dir_y * speed;
+    pos_z -= dir_z * speed;
+}
+
+void move_left_f(){
+    pos_x += dir_z * speed;
+    pos_z -= dir_x * speed;
+}
+
+void move_right_f(){
+    pos_x -= dir_z * speed;
+    pos_z += dir_x * speed;
+}
+
+/* ************ */
+/* TRD CAM CALC*/
+/* ************ */
+
+void move_foward_t(){
+    float xrot, yrot;
+    yrot = (v_angle / 180.0f * 3.141592654f);
+    xrot = (h_angle / 180.0f * 3.141592654f);
+    pos_x += (sin(yrot))*speed;
+    pos_z -= (cos(yrot))*speed;
+    pos_y -= (sin(xrot))*speed;
+}
+
+void move_back_t(){
+    float xrot, yrot;
+    yrot = (v_angle / 180.0f * 3.141592654f);
+    xrot = (h_angle / 180.0f * 3.141592654f);
+    pos_x -= (sin(yrot))*speed;
+    pos_z += (cos(yrot))*speed;
+    pos_y += (sin(xrot))*speed;
+}
+
+void move_left_t(){
+    float yrot;
+    yrot = (v_angle / 180.0f * 3.141592654f);
+    pos_x -= (cos(yrot)) * speed;
+    pos_z -= (sin(yrot)) * speed;
+}
+
+void move_right_t(){
+    float yrot;
+    yrot = (v_angle / 180.0f * 3.141592654f);
+    pos_x += (cos(yrot)) * speed;
+    pos_z += (sin(yrot)) * speed;
 }
 
 /* *************** */
 /* MOUSE MOVEMENT */
 /* *************** */
 
-void mouseMove(int x, int y)
-{
+void mouseMove( int x, int y ) {
+
+    centerX = glutGet(GLUT_WINDOW_WIDTH) / 2 ;
+    centerY = glutGet(GLUT_WINDOW_HEIGHT) / 2 ;
+
     if(warping)
     {
         warping = false;
         return;
     }
+    int diffx = x - centerX;
+    int diffy = y - centerY;
 
-    int dx = x - 100;
-    int dy = y - 100;
+    if(fps_cam){
+        h_angle = h_angle + diffx * rotSpeed;
+        v_angle = v_angle + diffy * rotSpeed;
 
-    h_angle = h_angle+dx*rotSpeed;
-    v_angle = v_angle+dy*rotSpeed;
-
-    dir_x=sin(v_angle)*sin(h_angle);
-    dir_y=-cos(v_angle);
-    dir_z=-sin(v_angle)*cos(h_angle);
-
-    if(mouseCaptured)
-    {
-        warping = true;
-        glutWarpPointer(100,100);
+        dir_x = sin(v_angle) * sin(h_angle);
+        dir_y = -cos(v_angle);
+        dir_z = -sin(v_angle) * cos(h_angle);
     }
+
+    else{
+        h_angle += (float) diffy;
+        v_angle += (float) diffx;
+
+        if (h_angle > 45.0f) h_angle = 45.0f;
+        if (h_angle < -25.0f) h_angle = -25.0f;
+    }
+
+    if(mouseCaptured){
+        warping = true;
+        glutWarpPointer(centerX,centerY);
+    }
+
 }
+
+/* ***** */
+/* SHIP  */
+/* ***** */
+
+void drawShip(){
+    glPushMatrix();
+    glScalef(0.2,0.2,0.2);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    //1
+    glColor3f(0.0f,1.0f,0.0f);
+    glScalef(0.3, 0.3, 0.3);
+    glutSolidCone(1,1,10,10);
+    glColor3f(0.0f,1.0f,0.0f);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    //2
+    glPushMatrix();
+    glTranslated(0,0,0);
+    glScalef(5.0,0.15,0);
+    glutSolidCube(2);
+    glPopMatrix();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    //3
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.35,0.35,0.35);
+    glTranslated(-3,-1,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //5
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.19,0.19,0.19);
+    glTranslated(-25,-1,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //4
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.35,0.35,0.35);
+    glTranslated(3,-1,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //6
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.15,0.15,0.15);
+    glTranslated(-27,-2,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //7
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.19,0.19,0.19);
+    glTranslated(25,-1,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //8
+    glColor3f(0.25f,0.25f,0.25f);
+    glPushMatrix();
+    glScalef(0.15,0.15,0.15);
+    glTranslated(27,-2,4);
+    glutWireSphere(2,50,50);
+    glPopMatrix();
+
+    //9
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.55,0.55,0.55);
+    glTranslated(1.79,-0.15,5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //10
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.42,0.42,0.42);
+    glTranslated(2.26,0.14,8.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //11
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.32,0.32,0.32);
+    glTranslated(2.84,0.6,13.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //12
+    glColor3f(0.87f,0.87f,0.87f);
+    glPushMatrix();
+    glScalef(0.22,0.22,0.22);
+    glTranslated(4.0,1.5,23.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //13
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.55,0.55,0.55);
+    glTranslated(-1.79,-0.15,5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //14
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.42,0.42,0.42);
+    glTranslated(-2.26,0.14,8.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //15
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.32,0.32,0.32);
+    glTranslated(-2.84,0.6,13.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //16
+    glColor3f(0.87f,0.87f,0.87f);
+    glPushMatrix();
+    glScalef(0.22,0.22,0.22);
+    glTranslated(-4.0,1.5,23.5);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //17
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.3,0.3,0.3);
+    glTranslated(-14.73,0.17,7);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //18
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.25,0.25,0.25);
+    glTranslated(-17.3,0.46,10);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //19
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.2,0.2,0.2);
+    glTranslated(-21.5,0.63,13);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //20
+    glColor3f(0.87f,0.87f,0.87f);
+    glPushMatrix();
+    glScalef(0.15,0.15,0.15);
+    glTranslated(-28.5,0.79,18);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //21
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.23,0.23,0.23);
+    glTranslated(-16.7,-0.53,7);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //22
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.17,0.17,0.17);
+    glTranslated(-22.1,-0.3,12);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //23
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.13,0.13,0.13);
+    glTranslated(-28.5,-0.01,18);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //24
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.23,0.23,0.23);
+    glTranslated(16.7,-0.53,7);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //25
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.17,0.17,0.17);
+    glTranslated(22.1,-0.3,12);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //26
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.13,0.13,0.13);
+    glTranslated(28.5,-0.01,18);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //27
+    glColor3f(1.0f,0.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.3,0.3,0.3);
+    glTranslated(14.73,0.17,7);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //28
+    glColor3f(1.0f,0.6f,0.0f);
+    glPushMatrix();
+    glScalef(0.25,0.25,0.25);
+    glTranslated(17.3,0.46,10);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //29
+    glColor3f(1.0f,1.0f,0.0f);
+    glPushMatrix();
+    glScalef(0.2,0.2,0.2);
+    glTranslated(21.5,0.63,13);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    //30
+    glColor3f(0.87f,0.87f,0.87f);
+    glPushMatrix();
+    glScalef(0.15,0.15,0.15);
+    glTranslated(28.5,0.79,18);
+    glutWireSphere(1,50,50);
+    glPopMatrix();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPopMatrix();
+}
+
+void camera(){
+    centerX = glutGet(GLUT_WINDOW_WIDTH) / 2 ;
+    centerY = glutGet(GLUT_WINDOW_HEIGHT) / 2 ;
+
+    if(fps_cam) {
+        if (foward) move_foward_f();
+        if (backward) move_back_f();
+        if (strafe_left) move_left_f();
+        if (strafe_right) move_right_f();
+        if(turn_left) turnLeft();
+        if(turn_right) turnRight();
+
+        gluLookAt(pos_x, pos_y, pos_z,
+                  pos_x + dir_x, pos_y + dir_y, pos_z + dir_z,
+                  0.0f, 1.0f, 0.0f);
+    }
+
+    else{
+        if (foward) move_foward_t();
+        if (backward) move_back_t();
+        if (strafe_left) move_left_t();
+        if (strafe_right) move_right_t();
+        if(turn_left) turnLeft();
+        if(turn_right) turnRight();
+
+        glTranslatef(0,centerY/1000 - 0.7,-centerX/200);
+        drawShip();
+        glRotatef(h_angle,1,0,0);
+        glRotatef(v_angle,0,1,0);
+        glTranslatef(-pos_x,-pos_y,-pos_z);
+    }
+ }
 
 int main(int argc, char** argv){
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100,100);
-    glutInitWindowSize(1540,890);
+    glutInitWindowSize(1080,720);
     window = glutCreateWindow("Engine - @CG2018");
 
      if(argc < 2){
@@ -239,11 +679,11 @@ int main(int argc, char** argv){
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
-    glutKeyboardFunc(keyboardControls);
+    glutKeyboardFunc(keyboardPress);
+    glutKeyboardUpFunc(keyboardRelease);
     glutPassiveMotionFunc(mouseMove);
 
     glutSetCursor(GLUT_CURSOR_NONE);
-    glutWarpPointer(100,100);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
