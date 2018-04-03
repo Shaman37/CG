@@ -297,8 +297,8 @@ void move_right_f(){
 
 void move_foward_t(){
     float xrot, yrot;
-    yrot = (v_angle / 180.0f * 3.141592654f);
-    xrot = (h_angle / 180.0f * 3.141592654f);
+    yrot = (v_angle / 180.0f * M_PI);
+    xrot = (h_angle / 180.0f * M_PI);
     pos_x += (sin(yrot))*speed;
     pos_z -= (cos(yrot))*speed;
     pos_y -= (sin(xrot))*speed;
@@ -306,8 +306,8 @@ void move_foward_t(){
 
 void move_back_t(){
     float xrot, yrot;
-    yrot = (v_angle / 180.0f * 3.141592654f);
-    xrot = (h_angle / 180.0f * 3.141592654f);
+    yrot = (v_angle / 180.0f * M_PI);
+    xrot = (h_angle / 180.0f * M_PI);
     pos_x -= (sin(yrot))*speed;
     pos_z += (cos(yrot))*speed;
     pos_y += (sin(xrot))*speed;
@@ -315,14 +315,14 @@ void move_back_t(){
 
 void move_left_t(){
     float yrot;
-    yrot = (v_angle / 180.0f * 3.141592654f);
+    yrot = (v_angle / 180.0f * M_PI);
     pos_x -= (cos(yrot)) * speed;
     pos_z -= (sin(yrot)) * speed;
 }
 
 void move_right_t(){
     float yrot;
-    yrot = (v_angle / 180.0f * 3.141592654f);
+    yrot = (v_angle / 180.0f * M_PI);
     pos_x += (cos(yrot)) * speed;
     pos_z += (sin(yrot)) * speed;
 }
