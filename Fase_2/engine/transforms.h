@@ -15,9 +15,6 @@ class Transform{
         float getX();
         float getY();
         float getZ();
-        void setX(float x);
-        void setY(float y);
-        void setZ(float z);
         virtual void perform() { };
 };
 
@@ -35,8 +32,6 @@ class Rotation : public Transform{
 
 public:
     Rotation(float a, float x, float y, float z);
-    float getAngle();
-    void setAngle(float a);
     void perform();
     virtual ~Rotation(void);
 };
@@ -58,4 +53,3 @@ public:
 };
 
 #endif
-

@@ -8,9 +8,12 @@
 #include "group.h"
 #include "parser.h"
 
-
 using namespace std;
 using std::vector;
+
+float pos_x=30;
+float pos_y = 5;
+float pos_z= 10;
 
 float dir_x = 0;
 float dir_y = 0;
@@ -19,9 +22,7 @@ float dir_z = 0;
 float h_angle;
 float v_angle;
 
-float pos_x=30;
-float pos_y = 5;
-float pos_z= 10;
+float tilt = 0;
 
 float speed = 0.2;
 float rotSpeed = 0.00175;
@@ -40,7 +41,6 @@ bool turn_left = false;
 bool turn_right = false;
 
 bool fps_cam = false;
-bool fullscreen = false;
 
 int window;
 
@@ -164,18 +164,26 @@ void keyboardPress(unsigned char key, int x, int y) {
 
         case 'a': // Translates to the Left
             strafe_left = true;
+            tilt += 50;
+            if(tilt > 25) tilt = 25;
             break;
 
         case 'd': // Translates to the Right
             strafe_right = true;
+            tilt -= 50;
+            if(tilt < -25) tilt = -25;
             break;
 
         case 'q':
             turn_left = true;
+            tilt +=50;
+            if(tilt > 25) tilt = 25;
             break;
 
         case 'e':
             turn_right = true;
+            tilt -=50;
+            if(tilt > -25) tilt = -25;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -239,10 +247,12 @@ void keyboardRelease(unsigned char key, int x, int y){
 
         case 'a': // Translates to the Left
             strafe_left = false;
+            tilt = 0;
             break;
 
         case 'd': // Translates to the Right
             strafe_right = false;
+            tilt = 0;
             break;
 
         case 'q':
@@ -257,7 +267,7 @@ void keyboardRelease(unsigned char key, int x, int y){
 
 void turnLeft(){
     v_angle -= 1;
-    if (v_angle >360) v_angle -= 360;
+    if (v_angle <360) v_angle -= 360;
 }
 
 void turnRight(){
@@ -345,27 +355,27 @@ void mouseMove( int x, int y ) {
     int diffy = y - centerY;
 
     if(fps_cam){
-        h_angle = h_angle + diffx * rotSpeed;
-        v_angle = v_angle + diffy * rotSpeed;
+        h_angle += diffx * rotSpeed;
+        v_angle +=  diffy * rotSpeed;
 
         dir_x = sin(v_angle) * sin(h_angle);
         dir_y = -cos(v_angle);
         dir_z = -sin(v_angle) * cos(h_angle);
     }
-
     else{
-        h_angle += (float) diffy;
-        v_angle += (float) diffx;
+        h_angle += diffy*0.4;
+        v_angle += diffx*0.4;
 
-        if (h_angle > 45.0f) h_angle = 45.0f;
-        if (h_angle < -25.0f) h_angle = -25.0f;
+        if (h_angle > 30.0f) h_angle = 30.0f;
+        if (h_angle < -30.0f) h_angle = -30.0f;
+        if(v_angle > 360.0f) v_angle -= 360.0f;
+
     }
 
     if(mouseCaptured){
         warping = true;
         glutWarpPointer(centerX,centerY);
     }
-
 }
 
 /* ***** */
@@ -375,6 +385,9 @@ void mouseMove( int x, int y ) {
 void drawShip(){
     glPushMatrix();
     glScalef(0.2,0.2,0.2);
+    glRotatef(tilt,0,0,1);
+    glRotatef(-h_angle,1,0,0);
+
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -439,9 +452,10 @@ void drawShip(){
     glColor3f(0.25f,0.25f,0.25f);
     glPushMatrix();
     glScalef(0.15,0.15,0.15);
-    glTranslated(27,-2,4);
+    glTranslated(27, -2, 4);
     glutWireSphere(2,50,50);
     glPopMatrix();
+
 
     //9
     glColor3f(1.0f,0.0f,0.0f);
@@ -648,8 +662,9 @@ void camera(){
         if(turn_left) turnLeft();
         if(turn_right) turnRight();
 
-        glTranslatef(0,centerY/1000 - 0.7,-centerX/200);
+        glTranslatef(0,centerY/1000 - 0.7,-centerX/225);
         drawShip();
+
         glRotatef(h_angle,1,0,0);
         glRotatef(v_angle,0,1,0);
         glTranslatef(-pos_x,-pos_y,-pos_z);
@@ -668,21 +683,20 @@ int main(int argc, char** argv){
         cout << "Invalid input. Use -h if you need some help." << endl;
         return 0;
     }
-
     else if (!strcmp(argv[1],"-h")){
         printHelp();
         return 0;
     }
 
-    else readXML(argv[1],scene); // Read XML File
+              else readXML(argv[1],scene); // Read XML File
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutIdleFunc(renderScene);
+
     glutKeyboardFunc(keyboardPress);
     glutKeyboardUpFunc(keyboardRelease);
     glutPassiveMotionFunc(mouseMove);
-
     glutSetCursor(GLUT_CURSOR_NONE);
 
     glEnable(GL_DEPTH_TEST);
