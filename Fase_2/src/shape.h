@@ -2,6 +2,7 @@
 #define _SHAPE_H_
 
 #include <vector>
+#include <GL/glut.h>
 #include "vertex.h"
 
 class Shape {
@@ -16,6 +17,7 @@ class Shape {
         void reverse();
         int getSize();
         std::vector<Vertex*> getVertexes();
+         void draw(GLenum draw_mode);
         virtual ~Shape(void);
 };
 

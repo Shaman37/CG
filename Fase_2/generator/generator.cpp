@@ -188,4 +188,5 @@ void printGuide() {
     std::cout << "\t-> cone <radius> <height> <slices> <stacks>" << std::endl;
     std::cout << "\t-> -(For an inverted cone, use a negative height)-" << std::endl;
     std::cout << "\t-> cylinder <radius> <height> <slices> <stacks>" << std::endl;
+    std::cout << "\t-> torus <Outer Radius> <Inner Radius> <slices> <stacks>" << std::endl;
 }

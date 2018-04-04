@@ -21,17 +21,9 @@ float dir_z = 0;
 
 float h_angle;
 float v_angle;
-
-float tilt = 0;
-
 float speed = 0.2;
 float rotSpeed = 0.00175;
-
-bool mouseCaptured = true;
-bool warping = false;
-
-int centerX;
-int centerY;
+float tilt = 0;
 
 bool foward = false;
 bool backward = false;
@@ -39,13 +31,21 @@ bool strafe_left = false;
 bool strafe_right = false;
 bool turn_left = false;
 bool turn_right = false;
+bool roll = false;
+int current_roll;
+
+int centerX;
+int centerY;
+
+bool mouseCaptured = true;
+bool warping = false;
 
 bool fps_cam = false;
-
 int window;
 
-Group* scene = new Group();  // Global struct
 int draw_mode = GL_LINE;
+
+Group* scene = new Group();  // Global struct
 
 void camera();
 
@@ -69,9 +69,15 @@ void printHelp(){
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   d: Strafe Right                                                                                                     |" << endl;
     cout << "|                                                                                                                                      |" << endl;
+    cout << "|   q: Turn Left                                                                                                            |" << endl;
+    cout << "|                                                                                                                                      |" << endl;
+    cout << "|   e: Turn Right                                                                                                         |" << endl;
+    cout << "|                                                                                                                                      |" << endl;
     cout << "|   + : Increase Camera Speed                                                                                 |" << endl;
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   - : Decrease Camera Speed                                                                                  |" << endl;
+    cout << "|                                                                                                                                      |" << endl;
+    cout << "|   SPACEBAR: DO A BARREL ROLL!                                                                              |" << endl;
     cout << "|                                                                                                                                      |" << endl;
     cout << "|   FORMAT:                                                                                                                     |" << endl;
     cout << "|   p: Change the figure format into points                                                     |" << endl;
@@ -109,18 +115,7 @@ void render(Group* g){
     for(Transform *t: t_list) t->perform();
 
     vector<Shape*> m_list = g->getModels();
-    for(Shape *s: m_list){
-        vector<Vertex*> v_list = s->getVertexes();
-
-        glPolygonMode(GL_FRONT_AND_BACK,draw_mode); // Changes how our shapes are represented (drawn). Lines, Points or Filled
-        glBegin(GL_TRIANGLES);
-
-        for(int i = 0; i<s->getSize();i++){
-            glVertex3f(v_list[i]->getX(),v_list[i]->getY(),v_list[i]->getZ());
-        }
-
-        glEnd();
-    }
+    for(Shape *s: m_list) s->draw(draw_mode);
 
     vector<Group*> c_list = g->getChilds();
     for(Group *c: c_list) render(c);
@@ -164,26 +159,32 @@ void keyboardPress(unsigned char key, int x, int y) {
 
         case 'a': // Translates to the Left
             strafe_left = true;
-            tilt += 50;
-            if(tilt > 25) tilt = 25;
+            tilt = 25;
             break;
 
         case 'd': // Translates to the Right
             strafe_right = true;
-            tilt -= 50;
-            if(tilt < -25) tilt = -25;
+            tilt = -25;
             break;
 
         case 'q':
-            turn_left = true;
-            tilt +=50;
-            if(tilt > 25) tilt = 25;
-            break;
+            if(!fps_cam){
+                turn_left = true;
+                tilt = 25;
+                break;
+            }
+            else break;
 
         case 'e':
-            turn_right = true;
-            tilt -=50;
-            if(tilt > -25) tilt = -25;
+            if(!fps_cam) {
+                turn_right = true;
+                tilt = -25;
+                break;
+            }
+            else break;
+
+        case 32:
+            roll = true;
             break;
 
         case 'p': // Sets our Models to be represented as Points
@@ -223,7 +224,9 @@ void keyboardPress(unsigned char key, int x, int y) {
         case 27:
                 glutDestroyWindow(window);
                 exit(0);
+
     }
+    glutPostRedisplay();
 }
 
 /* ---------------------- */
@@ -257,22 +260,35 @@ void keyboardRelease(unsigned char key, int x, int y){
 
         case 'q':
             turn_left = false;
+            tilt = 0;
             break;
 
         case 'e':
             turn_right = false;
+            tilt = 0;
             break;
     }
 }
 
 void turnLeft(){
     v_angle -= 1;
-    if (v_angle <360) v_angle -= 360;
+    if (v_angle < 360) v_angle += 360;
 }
 
 void turnRight(){
     v_angle += 1;
     if (v_angle >360) v_angle -= 360;
+}
+
+void barrelRoll(){
+    if(tilt == 25){
+        if(current_roll < 360) {glRotatef(current_roll,0,0,1); current_roll += 15;}
+        else {current_roll = 0; roll = false;}
+    }
+    else{
+        if(current_roll < 360) {glRotatef(-current_roll,0,0,1); current_roll += 15;}
+        else {current_roll = 0; roll = false;}
+    }
 }
 
 /* ************ */
@@ -363,13 +379,11 @@ void mouseMove( int x, int y ) {
         dir_z = -sin(v_angle) * cos(h_angle);
     }
     else{
-        h_angle += diffy*0.4;
-        v_angle += diffx*0.4;
+        h_angle += diffy*speed;
+        v_angle += diffx*speed;
 
-        if (h_angle > 30.0f) h_angle = 30.0f;
-        if (h_angle < -30.0f) h_angle = -30.0f;
-        if(v_angle > 360.0f) v_angle -= 360.0f;
-
+        if (h_angle > 40.0f) h_angle = 40.0f;
+        if (h_angle < -40.0f) h_angle = -40.0f;
     }
 
     if(mouseCaptured){
@@ -377,6 +391,7 @@ void mouseMove( int x, int y ) {
         glutWarpPointer(centerX,centerY);
     }
 }
+
 
 /* ***** */
 /* SHIP  */
@@ -388,6 +403,7 @@ void drawShip(){
     glRotatef(tilt,0,0,1);
     glRotatef(-h_angle,1,0,0);
 
+    if(roll) barrelRoll();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -634,6 +650,7 @@ void drawShip(){
     glPopMatrix();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     glPopMatrix();
 }
 
@@ -670,6 +687,7 @@ void camera(){
         glTranslatef(-pos_x,-pos_y,-pos_z);
     }
  }
+
 
 int main(int argc, char** argv){
 
