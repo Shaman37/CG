@@ -1,0 +1,9 @@
+<scene>
+    <group>
+        <scale X='0.05' Y='0.05' Z='0.05' />
+        <colour R="255" B="0" G="128"/>
+        <models>
+            <model file="../files3d/sphere.3d"/>
+        </models>
+    </group>
+</scene>

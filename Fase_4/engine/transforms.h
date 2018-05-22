@@ -1,0 +1,65 @@
+#ifndef _TRANSFORMS_H
+#define _TRANSFORMS_H
+
+#include<vector>
+#include <cmath>
+#include "../src/vertex.h"
+
+class Transform{
+
+    float x_var;
+    float y_var;
+    float z_var;
+
+    public:
+        Transform();
+        Transform(float x, float y, float z);
+        float getX();
+        float getY();
+        float getZ();
+        virtual void perform() { };
+};
+
+class Translation : public Transform{
+    float time;
+    std::vector<Vertex*> curve_points;
+    std::vector<Vertex*> catmull_points;
+
+public:
+    Translation();
+    Translation(float x, float y, float z,float t);
+    void addPoint(Vertex* v);
+    void generateCurve();
+    void drawCurve();
+    int getCurveSize();
+    void perform();
+    virtual ~Translation(void);
+};
+
+class Rotation : public Transform{
+    float angle;
+    float time;
+
+public:
+    Rotation(float t, float a, float x, float y, float z);
+    void perform();
+    virtual ~Rotation(void);
+};
+
+class Scale : public Transform{
+
+public:
+    Scale(float x, float y, float z);
+    void perform();
+    virtual ~Scale(void);
+};
+
+class Colour : public Transform{
+
+public:
+    Colour(float r, float g, float b);
+    void perform();
+    virtual  ~Colour(void);
+};
+
+#endif

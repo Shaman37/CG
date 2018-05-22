@@ -1,0 +1,94 @@
+<scene>
+    <group>
+        <scale X="0.2" Y="0.3" Z="0.3" />
+        <translate Z="2"/>
+        <group >
+            <translate Y="0.3"/>
+            <scale X="0.8" Y="0.3" Z="0.3" />
+            <colour R="90" G="128" B="115" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group >
+            <translate  Y="0.5"/>
+            <scale X="0.3" Y="0.2" Z="0.1" />
+            <colour R="0" G="255" B="255" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="wings">
+            <scale X="4.5" Y="0.1" Z="0.1" />
+            <translate X="0" Y="3" Z="-0.2"/>
+            <colour R="160" G="160" B="160" />
+            <models>
+                <model file="../files3d/box.3d" />
+            </models>
+        </group>
+        <group name ="main propolsor left">
+            <scale X="0.25" Y="0.25" Z="0.25" />
+            <translate X="6" Y="0.8" Z="0.2"/>
+            <colour R="255" G="255" B="255" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="middle propolsor left">
+            <scale X="0.20" Y="0.20" Z="0.20" />
+            <translate X="7.2" Y="1.3" Z="2"/>
+            <colour  R="255" G="0" B="0" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="outer propolsor left">
+            <scale X="0.15" Y="0.15" Z="0.15" />
+            <translate X="9.4" Y="1.8" Z="4"/>
+            <colour  R="255" G="255" B="0" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="main propolsor rigth">
+            <scale X="0.25" Y="0.25" Z="0.25" />
+            <translate X="-6" Y="0.8" Z="0.2"/>
+            <colour R="255" G="255" B="255" />
+            <models>
+                <model file="../files3d/sphere.3d" />
+            </models>
+        </group>
+        <group name ="inner propolsor rigth">
+            <scale X="0.20" Y="0.20" Z="0.20" />
+            <translate X="-7.2" Y="1.3" Z="2"/>
+            <colour R="255" G="0" B="0" />
+            <models>
+                <model file="../files3d/sphere.3d" />
+            </models>
+        </group>
+        <group name ="outer propolsor left">
+            <scale X="0.15" Y="0.15" Z="0.15" />
+            <translate X="-9.4" Y="1.8" Z="4"/>
+            <colour  R="255" G="255" B="0" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="Secondary propolsor left">
+            <scale X="0.15" Y="0.15" Z="0.15" />
+            <translate X="15" Y="1.8" Z="0.2"/>
+            <colour R="255" G="255" B="255" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+        <group name ="Secondary propolsor left">
+            <scale X="0.15" Y="0.15" Z="0.15" />
+            <translate X="-15" Y="1.8" Z="0.2"/>
+            <colour R="255" G="255" B="255" />
+            <models>
+                <model file="../files3d/sphere.3d"/>
+            </models>
+        </group>
+    </group>
+</scene>

@@ -1,0 +1,9 @@
+<scene>
+    <group>
+        <scale X='0.5' Y='0.5' Z='0.5' />
+        <colour R="102" B="0" G="51"/>
+        <models>
+            <model file="../files3d/asteroid.3d" />
+        </models>
+    </group>
+</scene>
